@@ -82,12 +82,12 @@ public class HttpIsoReader {
     }
 
     public Boolean open(String URL) {
-        return open(URL, null);
+        return open(URL, null, null);
     }
 
-    public Boolean open(String URL, ArchiveFormat type) {
+    public Boolean open(String URL, ArchiveFormat type, String password) {
         try {
-            archive = SevenZip.openInArchive(type, new MonitorIInStream(new HttpIInStream(URL)));
+            archive = SevenZip.openInArchive(type, new MonitorIInStream(new HttpIInStream(URL)), password);
             return true;
         } catch (Exception ex) {
             return false;
@@ -95,22 +95,24 @@ public class HttpIsoReader {
     }
 
     public Boolean open(File file) {
-        return open(file, null);
+        return open(file, null, null);
     }
 
-    public Boolean open(File file, ArchiveFormat type) {
+    public Boolean open(File file, ArchiveFormat type, String password) {
         try {
             archive = SevenZip.openInArchive(type,
                     new MonitorIInStream(
                     new RandomAccessFileInStream(
-                    new RandomAccessFile(file, "r"))));
+                    new RandomAccessFile(file, "r"))),
+                    password
+                    );
             return true;
         } catch (Exception ex) {
             return false;
         }
     }
 
-    public void getFile(String sourceFilePath, String targetFilePath) throws IOException, SevenZipException {
+    public void getFile(String sourceFilePath, String targetFilePath, String password) throws IOException, SevenZipException {
 
         File f = new File(targetFilePath);
         final FileOutputStream fos = new FileOutputStream(f);
@@ -146,7 +148,7 @@ public class HttpIsoReader {
                             throw new SevenZipException(ex);
                         }
                     }
-                });
+                }, password);
                 if (result == ExtractOperationResult.OK) {
                     fos.flush();
                     fos.close();
@@ -204,6 +206,7 @@ public class HttpIsoReader {
         ArchiveFormat archive_type = null;
         String extract_filename = null;
         String output_filename = null;
+        String password = null;
         boolean list_archive_content = false;
         
         for (String arg : a) {
@@ -232,6 +235,8 @@ public class HttpIsoReader {
                 list_archive_content = true;
             } else if (arg_lower.startsWith("/o=") || arg_lower.startsWith("-o=")) {
                 output_filename = arg.substring(3);
+            } else if (arg_lower.startsWith("/p=") || arg_lower.startsWith("-p=")) {
+                password = arg.substring(3);
             } else if (arg_lower.startsWith("/v") || arg_lower.startsWith("-v") || arg_lower.startsWith("--v")) {
                 version();
                 System.exit(0);
@@ -255,14 +260,14 @@ public class HttpIsoReader {
         Boolean result = false;
         if (archive_filename.toLowerCase().startsWith("http://")) {
             System.out.println("Opening HTTP archive '" + archive_filename + "'.");
-            result = reader.open(archive_filename, archive_type);
+            result = reader.open(archive_filename, archive_type, password);
         } else if (archive_filename.toLowerCase().startsWith("https://")) {
             System.out.println("Opening HTTPS archive '" + archive_filename + "'.");
-            result = reader.open(archive_filename, archive_type);
+            result = reader.open(archive_filename, archive_type, password);
         } else {
             System.out.println("Opening FILE archive '" + archive_filename + "'.");
             try {
-                result = reader.open(new File(archive_filename), archive_type);
+                result = reader.open(new File(archive_filename), archive_type, password);
             }
             catch(Exception e){
                 System.out.println("Invalid '" + archive_type + "'  file '" + archive_filename + "'.");
@@ -301,7 +306,7 @@ public class HttpIsoReader {
         System.out.println("Extracting file '" + extract_filename + "' ...");
         
         try {
-            reader.getFile(extract_filename, output_filename);
+            reader.getFile(extract_filename, output_filename, password);
             reader.close();
         }
         catch(Exception e){
