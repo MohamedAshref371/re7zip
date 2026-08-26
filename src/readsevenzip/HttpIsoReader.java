@@ -63,6 +63,7 @@ public class HttpIsoReader {
         System.out.println("          /e  -e    filename to extract out of the archive");
         System.out.println("          /l  -l    list content of archive");
         System.out.println("          /o  -o    output filename for the extracted file");
+        System.out.println("          /p  -p    set password");
         System.out.println("          /v  -v    show version info\n");
         System.out.println("Example:");
         System.out.println("          java -jar re7zip.jar /t=iso\n"
