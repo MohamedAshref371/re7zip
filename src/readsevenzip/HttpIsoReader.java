@@ -60,10 +60,10 @@ public class HttpIsoReader {
         }
         
         System.out.println("          /a  -a    archive filename or URL location of archive");
+        System.out.println("          /p  -p    password for the archive");
         System.out.println("          /e  -e    filename to extract out of the archive");
         System.out.println("          /l  -l    list content of archive");
         System.out.println("          /o  -o    output filename for the extracted file");
-        System.out.println("          /p  -p    set password");
         System.out.println("          /v  -v    show version info\n");
         System.out.println("Example:");
         System.out.println("          java -jar re7zip.jar /t=iso\n"
@@ -105,8 +105,7 @@ public class HttpIsoReader {
                     new MonitorIInStream(
                     new RandomAccessFileInStream(
                     new RandomAccessFile(file, "r"))),
-                    password
-                    );
+                    password);
             return true;
         } catch (Exception ex) {
             return false;
@@ -205,9 +204,9 @@ public class HttpIsoReader {
         String archive_filename = null;
         String archive_type_arg;
         ArchiveFormat archive_type = null;
+        String password = null;
         String extract_filename = null;
         String output_filename = null;
-        String password = null;
         boolean list_archive_content = false;
         
         for (String arg : a) {
@@ -230,14 +229,14 @@ public class HttpIsoReader {
                 }
             } else if (arg_lower.startsWith("/a=") || arg_lower.startsWith("-a=")) {
                 archive_filename = arg.substring(3);
+            } else if (arg_lower.startsWith("/p=") || arg_lower.startsWith("-p=")) {
+                password = arg.substring(3);
             } else if (arg_lower.startsWith("/e=") || arg_lower.startsWith("-e=")) {
                 extract_filename = arg.substring(3);
             } else if (arg_lower.equals("/l") || arg_lower.equals("-l")) {
                 list_archive_content = true;
             } else if (arg_lower.startsWith("/o=") || arg_lower.startsWith("-o=")) {
                 output_filename = arg.substring(3);
-            } else if (arg_lower.startsWith("/p=") || arg_lower.startsWith("-p=")) {
-                password = arg.substring(3);
             } else if (arg_lower.startsWith("/v") || arg_lower.startsWith("-v") || arg_lower.startsWith("--v")) {
                 version();
                 System.exit(0);

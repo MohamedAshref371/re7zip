@@ -50,6 +50,7 @@ Options:
                       hfs, gzip, cpio, bzip2, 7z, z, arj, cab, lzh, chm, nsis,
                       ar, rpm, udf, wim, xar, fat, ntfs
           /a  -a    archive filename or URL location of archive
+          /p  -p    password for the archive
           /e  -e    filename to extract out of the archive
           /l  -l    list content of archive
           /o  -o    output filename for the extracted file
