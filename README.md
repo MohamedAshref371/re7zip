@@ -397,6 +397,10 @@ http://reboot.pro/files/file/224-re7zip/
 ## History
 
 
+### Version 1.5
+
+  - Add support for reading/extracting password-protected archives.
+
 ### Version 1.4
 
   - Add support for reading/extracting archives from HTTPS urls.
