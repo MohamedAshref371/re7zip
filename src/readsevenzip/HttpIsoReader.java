@@ -129,7 +129,7 @@ public class HttpIsoReader {
                 final long[] sizeArray = new long[1];
                 final Long size = item.getSize();
 
-                result = item.extractSlow(new ISequentialOutStream() {
+                ISequentialOutStream outStream = new ISequentialOutStream() {
 
                     long loaded = 0;
 
@@ -148,7 +148,13 @@ public class HttpIsoReader {
                             throw new SevenZipException(ex);
                         }
                     }
-                }, password);
+                };
+                
+                if (password == null)
+                    result = item.extractSlow(outStream);
+                else
+                    result = item.extractSlow(outStream, password);
+                
                 if (result == ExtractOperationResult.OK) {
                     fos.flush();
                     fos.close();
